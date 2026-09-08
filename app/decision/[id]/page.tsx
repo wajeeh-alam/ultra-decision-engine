@@ -3,16 +3,12 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Database, Plus, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { AlternativeCard } from '@/components/decision/AlternativeCard';
 import { DecisionScore } from '@/components/decision/DecisionScore';
-import { DimensionScores } from '@/components/decision/DimensionScores';
-import { EvaluationSummary } from '@/components/decision/EvaluationSummary';
-import { OpportunityCostCard } from '@/components/decision/OpportunityCostCard';
 import { ProfileOverlapCard } from '@/components/decision/ProfileOverlapCard';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { getDecision } from '@/lib/storage/decisions';
 import type { ActivityEvaluation } from '@/schemas/evaluation';
 
@@ -39,7 +35,7 @@ export default function DecisionPage() {
   return (
     <main className="min-h-[calc(100vh-72px)] bg-black px-4 py-8 text-white sm:px-6 sm:py-12">
       <div className="mx-auto max-w-[1050px]">
-        <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
+        <div className="mb-7">
           <div>
             <Link
               href="/"
@@ -48,50 +44,29 @@ export default function DecisionPage() {
               <ArrowLeft className="size-4" /> New decision
             </Link>
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-600">
-              Evaluation
+              02 / The proposed bet
             </p>
             <h1 className="mt-1 max-w-3xl text-2xl font-semibold tracking-[-0.03em]">
               {evaluation.proposal.title}
             </h1>
           </div>
-          <Link
-            href="/compare"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/60 px-4 py-2.5 text-sm font-medium text-white hover:bg-white hover:text-black"
-          >
-            <Plus className="size-4" /> Compare decisions
-          </Link>
         </div>
-        <div className="space-y-7">
+        <div className="space-y-8">
           <DecisionScore evaluation={evaluation} />
-          <DimensionScores scores={evaluation.scores} />
-          <div className="grid gap-5 md:grid-cols-[1.35fr_.65fr]">
-            <ProfileOverlapCard overlap={evaluation.profileOverlap} />
-            <div className="rounded-xl border border-[#41c969] bg-black p-6">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#41c969]">
-                Marginal profile value
-              </p>
-              <p className="mt-2 text-5xl font-semibold tracking-[-0.06em]">
-                {evaluation.scores.marginalProfileValue}
-                <span className="text-lg text-zinc-600"> / 100</span>
-              </p>
-              <p className="mt-4 text-sm leading-6 text-zinc-400">
-                How much new evidence this adds beyond what you’ve already
-                demonstrated.
-              </p>
-            </div>
-          </div>
-          <OpportunityCostCard cost={evaluation.opportunityCost} />
+          <ProfileOverlapCard overlap={evaluation.profileOverlap} />
           <section>
-            <div className="mb-4 flex items-center gap-3">
-              <Sparkles className="size-5 text-[#41c969]" />
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-600">
-                  Higher leverage
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#41c969]">
+                  06 / Higher-leverage alternatives
                 </p>
-                <h2 className="text-2xl font-semibold tracking-[-0.03em]">
-                  Make this idea 2× better
+                <h2 className="mt-2 text-3xl font-semibold tracking-[-0.04em]">
+                  Fill a gap instead.
                 </h2>
               </div>
+              <p className="max-w-sm text-sm leading-6 text-zinc-500">
+                Same ambition. More new evidence per hour invested.
+              </p>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {evaluation.betterVersions.map((item, index) => (
@@ -103,36 +78,14 @@ export default function DecisionPage() {
               ))}
             </div>
           </section>
-          <section className="rounded-xl border border-white/35 bg-black p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Database className="size-5 text-[#35c9f2]" />
-                <h2 className="text-xl font-semibold tracking-tight">
-                  Better opportunities for this goal
-                </h2>
-              </div>
-              <span className="text-xs text-zinc-600">
-                DEMO OPPORTUNITY DATA
-              </span>
-            </div>
-            <div className="mt-5 divide-y divide-white/20 border-t border-white/20">
-              {evaluation.alternativeOpportunities.map((item) => (
-                <div
-                  key={item.opportunityId}
-                  className="grid gap-3 py-4 sm:grid-cols-[1fr_auto] sm:items-center"
-                >
-                  <div>
-                    <h3 className="font-semibold">{item.title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-zinc-500">
-                      {item.whyBetter}
-                    </p>
-                  </div>
-                  <ScoreBadge score={item.estimatedScore} />
-                </div>
-              ))}
-            </div>
-          </section>
-          <EvaluationSummary evaluation={evaluation} />
+          <div className="flex justify-center border-t border-white/25 pt-7">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-zinc-200"
+            >
+              Evaluate another decision <ArrowUpRight className="size-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </main>

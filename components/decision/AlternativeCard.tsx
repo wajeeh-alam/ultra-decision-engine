@@ -1,12 +1,4 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowUpRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
-import { requestEvaluation } from '@/lib/client/evaluate';
-import { saveDecision } from '@/lib/storage/decisions';
 import type { ActivityEvaluation } from '@/schemas/evaluation';
 
 export function AlternativeCard({
@@ -16,18 +8,6 @@ export function AlternativeCard({
   alternative: ActivityEvaluation['betterVersions'][number];
   rank: number;
 }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  async function evaluate() {
-    setLoading(true);
-    try {
-      const item = await requestEvaluation(alternative.title);
-      saveDecision(item);
-      router.push(`/decision/${item.id}`);
-    } finally {
-      setLoading(false);
-    }
-  }
   return (
     <article
       className={`flex h-full flex-col rounded-xl border bg-black p-5 text-white ${rank === 1 ? 'border-[#41c969]' : 'border-white/35'}`}
@@ -53,15 +33,9 @@ export function AlternativeCard({
           </span>
         ))}
       </div>
-      <Button
-        onClick={evaluate}
-        disabled={loading}
-        variant="outline"
-        className="mt-5 rounded-lg border-white/60 bg-transparent font-medium text-white hover:bg-white hover:text-black"
-      >
-        {loading ? 'Evaluating…' : 'Evaluate this instead'}{' '}
-        <ArrowUpRight className="size-4" />
-      </Button>
+      <p className="mt-auto pt-5 text-xs font-medium uppercase tracking-[0.16em] text-zinc-500">
+        Adds {alternative.newDimensionsAdded.length} new evidence dimensions
+      </p>
     </article>
   );
 }
