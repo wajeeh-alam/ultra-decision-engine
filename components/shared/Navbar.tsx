@@ -3,14 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Clock3, GitCompareArrows, Sparkles, UserRound } from 'lucide-react';
+import { Sparkles, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getStoredProfile } from '@/lib/storage/profile';
 
 const links = [
   { href: '/', label: 'Decide', icon: Sparkles },
-  { href: '/compare', label: 'Compare', icon: GitCompareArrows },
-  { href: '/history', label: 'History', icon: Clock3 },
   { href: '/profile', label: 'Profile', icon: UserRound },
 ];
 

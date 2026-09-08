@@ -6,14 +6,15 @@ import { ArrowRight, Clock3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { seededProposals } from '@/data/demo-opportunities';
 import { saveDecision } from '@/lib/storage/decisions';
 import { LoadingAnalysis } from '@/components/shared/LoadingAnalysis';
 import { requestEvaluation } from '@/lib/client/evaluate';
 
 export function DecisionInput() {
   const router = useRouter();
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(
+    'Build another full-stack productivity SaaS.',
+  );
   const [hours, setHours] = useState(10);
   const [weeks, setWeeks] = useState(12);
   const [loading, setLoading] = useState(false);
@@ -26,12 +27,8 @@ export function DecisionInput() {
     }
     setLoading(true);
     setError('');
-    const started = Date.now();
     try {
       const evaluation = await requestEvaluation(title.trim(), hours, weeks);
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.max(0, 1650 - (Date.now() - started))),
-      );
       saveDecision(evaluation);
       router.push(`/decision/${evaluation.id}`);
     } catch (caught) {
@@ -102,16 +99,20 @@ export function DecisionInput() {
   }, [router]);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-white/60 bg-black">
-      <div className="border-b border-white/25 p-5 sm:p-7">
-        <div className="mb-4 text-lg font-semibold text-white">
-          What are you thinking about doing?
+    <section className="overflow-hidden rounded-xl border border-white/60 bg-black">
+      <div className="p-5 sm:p-7">
+        <div className="mb-2 text-2xl font-semibold tracking-[-0.03em] text-white">
+          I’m considering doing this.
         </div>
+        <p className="mb-5 text-sm leading-6 text-zinc-500">
+          Ultra scores the value of the evidence it adds—not the idea in
+          isolation.
+        </p>
         <Textarea
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="e.g. Spend 3 months building another SaaS app…"
-          className="min-h-36 resize-none rounded-xl border-white/30 bg-[#0b0b0b] p-4 text-base text-white shadow-none placeholder:text-zinc-600 focus-visible:border-[#35c9f2] focus-visible:ring-1 focus-visible:ring-[#35c9f2]"
+          placeholder="Describe the activity…"
+          className="min-h-32 resize-none rounded-lg border-white/30 bg-[#0b0b0b] p-4 text-lg font-medium leading-7 text-white shadow-none placeholder:text-zinc-600 focus-visible:border-[#35c9f2] focus-visible:ring-1 focus-visible:ring-[#35c9f2]"
           aria-label="Activity idea"
         />
         <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
@@ -150,35 +151,18 @@ export function DecisionInput() {
           <Button
             onClick={analyze}
             disabled={loading}
-            className="h-12 rounded-xl bg-white px-6 font-semibold text-black hover:bg-zinc-200"
+            className="h-12 rounded-lg bg-white px-6 font-semibold text-black hover:bg-zinc-200"
           >
-            Analyze <ArrowRight className="size-4" />
+            Show marginal value <ArrowRight className="size-4" />
           </Button>
         </div>
         {error && (
           <p className="mt-3 text-sm font-medium text-red-600">{error}</p>
         )}
       </div>
-      {loading ? (
-        <div className="p-5 sm:p-7">
+      {loading && (
+        <div className="border-t border-white/25 p-5 sm:p-7">
           <LoadingAnalysis />
-        </div>
-      ) : (
-        <div className="p-5 sm:p-7">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-zinc-500">
-            Try an example
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {seededProposals.map((proposal) => (
-              <button
-                key={proposal}
-                onClick={() => setTitle(proposal)}
-                className="rounded-lg border border-white/25 bg-black px-3 py-2 text-left text-sm text-zinc-400 transition hover:border-white hover:text-white"
-              >
-                {proposal.replace(/[.]$/, '')}
-              </button>
-            ))}
-          </div>
         </div>
       )}
     </section>
