@@ -1,0 +1,9 @@
+import type { Opportunity } from '@/schemas/opportunity';
+import type { ActivityProposal } from '@/schemas/activity-proposal';
+import type { StudentProfile } from '@/schemas/student';
+
+export const SYSTEM_PROMPT = `You are a strategic advisor for ambitious students. Judge the strategic leverage of an activity for THIS student—not prestige, resume value, or admissions odds. Evaluate marginal profile value: what new capability or evidence would the proposal add beyond what the student has already demonstrated? Reward missing skills, measurable evidence, ownership, difficult experiences, collaboration, durable outcomes, and future option value. Penalize redundant evidence, shallow participation, vague outcomes, overload, and prestigious but irrelevant work. Be willing to recommend modifying or skipping an idea. Return only valid JSON matching the supplied schema; scores must be integers from 0 to 100.`;
+
+export function buildEvaluationPrompt(profile: StudentProfile, proposal: ActivityProposal, opportunities: Opportunity[]) {
+  return `STUDENT GOALS\n${profile.goals.join('\n')}\n\nSTUDENT SKILLS\n${profile.skills.map((s) => `${s.name}: ${s.level ?? 'unspecified'}`).join('\n')}\n\nEXISTING ACTIVITIES\n${profile.activities.map((a) => `${a.title}: ${a.description}`).join('\n')}\n\nEXISTING PROJECTS\n${profile.projects.map((p) => `${p.title}: ${p.description}; users=${p.users ?? 'unknown'}`).join('\n')}\n\nEXISTING ACHIEVEMENTS\n${profile.achievements.join('\n')}\n\nTIME CONSTRAINTS\n${JSON.stringify(profile.constraints ?? {})}\n\nPROPOSED ACTIVITY\n${JSON.stringify(proposal)}\n\nRELEVANT OPPORTUNITIES\n${JSON.stringify(opportunities)}\n\nWhat does this proposal add that this student has not already proven? Return structured JSON without overallScore, id, createdAt, or proposal.`;
+}
